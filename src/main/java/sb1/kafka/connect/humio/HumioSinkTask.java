@@ -61,7 +61,7 @@ public class HumioSinkTask extends SinkTask {
         OutputStreamWriter osw = new OutputStreamWriter(r.getOutputStream());
         osw.write(String.join("\n", recordsArray));
         osw.flush();
-        if (r.getResponseCode() > 299) {
+        if (r.getResponseCode() > 399) {
           log.error("Error from Humio. status={}", r.getResponseCode());
           throw new ConnectException("Error from Humio.");
         }
