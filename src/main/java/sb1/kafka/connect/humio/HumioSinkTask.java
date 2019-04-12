@@ -4,6 +4,7 @@ import org.apache.kafka.clients.consumer.OffsetAndMetadata;
 import org.apache.kafka.common.TopicPartition;
 import org.apache.kafka.connect.sink.SinkRecord;
 import org.apache.kafka.connect.sink.SinkTask;
+import org.apache.kafka.connect.errors.ConnectException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.json.simple.JSONObject;
@@ -39,7 +40,6 @@ public class HumioSinkTask extends SinkTask {
 
   @Override
   public void put(Collection<SinkRecord> records) {
-    //log.info("Records size: {}", records.size());
     List recordsArray = new ArrayList();
     for (SinkRecord sr : records) {
       JSONObject event = new JSONObject();
@@ -61,10 +61,12 @@ public class HumioSinkTask extends SinkTask {
         OutputStreamWriter osw = new OutputStreamWriter(r.getOutputStream());
         osw.write(String.join("\n", recordsArray));
         osw.flush();
-        log.info("Response: {}", r.getResponseCode());
-        osw.close();
+        if (r.getResponseCode() > 299) {
+          log.error("Error from Humio. status={}", r.getResponseCode());
+          throw new ConnectException("Error from Humio.");
+        }
       } catch (IOException ex) {
-          log.error("POST request error: {}", ex);
+          throw new ConnectException("POST request error: {}", ex);
       }
     }
   }

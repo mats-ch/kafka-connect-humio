@@ -20,7 +20,7 @@ Example:
 	    "tasks.max": 1,
 	    "topics": "test",
 	    "errors.log.enable": true,
-	    "humio.url": "http://127.0.0.1:8080/api/v1/ingest/hec"
+	    "humio.url": "http://127.0.0.1:8080/api/v1/ingest/hec",
 	    "humio.token": "hx5jfCXkcFq7VZzvNZwXG4pmnMkhbwl2OazkmBlEfsIe"
 	  }
 	}
