@@ -9,7 +9,8 @@ mvn clean compile assembly:single
 
 ## Usage
 
-Supports the configuration options "humio.url" and "humio.token".
+Supports the configuration options "humio.url", "humio.token" and "humio.retry.on.http.error".
+"humio.retry.on.http.error" will try to send failed http requests again if set to true and defaults to false.
 
 Example:
 
@@ -21,7 +22,8 @@ Example:
 	    "topics": "test",
 	    "errors.log.enable": true,
 	    "humio.url": "http://127.0.0.1:8080/api/v1/ingest/hec",
-	    "humio.token": "hx5jfCXkcFq7VZzvNZwXG4pmnMkhbwl2OazkmBlEfsIe"
+	    "humio.token": "hx5jfCXkcFq7VZzvNZwXG4pmnMkhbwl2OazkmBlEfsIe",
+	    "humio.retry.on.http.error": false
 	  }
 	}
 

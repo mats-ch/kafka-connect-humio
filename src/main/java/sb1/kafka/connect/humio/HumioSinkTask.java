@@ -5,6 +5,7 @@ import org.apache.kafka.common.TopicPartition;
 import org.apache.kafka.connect.sink.SinkRecord;
 import org.apache.kafka.connect.sink.SinkTask;
 import org.apache.kafka.connect.errors.ConnectException;
+import org.apache.kafka.connect.errors.RetriableException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.json.simple.JSONObject;
@@ -61,9 +62,14 @@ public class HumioSinkTask extends SinkTask {
         OutputStreamWriter osw = new OutputStreamWriter(r.getOutputStream());
         osw.write(String.join("\n", recordsArray));
         osw.flush();
-        if (r.getResponseCode() > 399) {
+        if (r.getResponseCode() > 400) {
           log.error("Error from Humio. status={}", r.getResponseCode());
-          throw new ConnectException("Error from Humio.");
+          if (this.config.getHumioRetryOnError()) {
+            throw new RetriableException("Retrying request");
+          }
+          else {
+            throw new ConnectException("Error from Humio.");
+          }
         }
       } catch (IOException ex) {
           throw new ConnectException("POST request error: {}", ex);
